@@ -1,0 +1,77 @@
+//Estratégia atual: seguir até o próximo obstáculo e manobrar ao chegar a ele
+
+// escopo principal: controlar a estratégia
+
+//proposta geral: controlar apenas o fluxo das operações, mas não em como serão realizadas, obtendo o feedback de cada operação para traçar o próximo passo
+
+// exemplo - escopo void loop: controlar apenas quais serão os movimentos, solicitando uma instrução, mas não se preocupando com as complexidades de como ela é executada. Cada operação retorna um feedback que servirá de base para a tomada de decisão da próxima operação
+
+//segue o pseudocódigo das estruturas propostas
+
+Loop() {
+    Seguiu = seguirAteObstaculo()
+    If seguiu:
+        Return //para continuar a seguir
+    While true:
+        Manobrou = manobrar()
+        If Manobrou:
+            Break
+
+}
+
+//explorando as operações
+
+seguirAteObstaculo() {
+   Seguir = false
+   MediçãoFrontal = Medir()
+   If mediçãoFrontal > DISTANCIA_FRONTAL_MINIMA: //arbitrar valor
+      Seguir = true
+      AvançarMotoresDC()
+   Else:
+      PararMotoresDC()
+   Return seguir //feedback da operação
+}
+
+Manobrar() {
+    
+   Manobrar = false
+   Lado = EscanearLaterais()
+   if lado != LADO_NULO:
+      manobrar = true
+      if lado == LADO_DIREITO: 
+         AvancarMotor(motorEsquerda, SENTIDO_FRONTAL)
+      else:
+         AvancarMotor (motorDireita, SENTIDO_FRONTAL)
+      Delay para a manobra
+   else: 
+      RetrocederMotores(motorDireita, motorEsquerda)
+      Delay para a ré
+   Return manobrar //feedback da operação
+}
+
+EscanearLateral() {
+   lado = LADO_NULO;
+   medicao = 0
+   girarSensor(DIREITA)
+   MediçãoDireita = medir()
+   girarSensor(ESQUERDA)
+   MediçãoEsquerda = medir()
+   medicao = max(Medição Direita, medição esquerda)
+   If medicao > distanciaLateralMinima:
+      If medicao == mediçãoDireita:
+         lado = LADO_DIREITA
+      else:
+         lado = LADO_ESQUERDA
+   girarSensor(FRENTE)
+   Return lado
+}
+
+
+
+
+VANTAGENS:
+- legibilidade e organização
+- menor complexidade
+- isolamento e testabilidade
+- manutenção e correção
+- extensão ou mudança com poucas adaptações
