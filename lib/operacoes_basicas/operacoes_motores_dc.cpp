@@ -1,4 +1,3 @@
-/*
 #include <Arduino.h>
 #include "operacoes.h"
 
@@ -35,4 +34,3 @@ void manobrarLateral(int lado) {
     moverMotorDC(motorDireito, SENTIDO_FRONTAL);
   }
 }
-*/

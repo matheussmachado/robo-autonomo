@@ -1,9 +1,8 @@
 #include <Arduino.h>
 #include "operacoes.h"
-//#include "testes_de_vista.h"
 
 
-// OPERAÇÕES INTERMEDIÁRIAS
+// OPERAÇÕES/FUNÇÕES INTERMEDIÁRIAS
 //============================================================
 bool verificarObstaculoFrontal() {
   if (medirDistanciaCm() >= DISTANCIA_FRONTAL_MINIMA) {

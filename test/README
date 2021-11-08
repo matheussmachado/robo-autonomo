@@ -1,11 +1,3 @@
+# SOBRE
 
-This directory is intended for PlatformIO Unit Testing and project tests.
-
-Unit Testing is a software testing method by which individual units of
-source code, sets of one or more MCU program modules together with associated
-control data, usage procedures, and operating procedures, are tested to
-determine whether they are fit for use. Unit testing finds problems early
-in the development cycle.
-
-More information about PlatformIO Unit Testing:
-- https://docs.platformio.org/page/plus/unit-testing.html
+Esse diretório de testes foi utilizado não da maneira sugerida, mas sim com o propósito de criar códigos para serem testados via simulações no Tinkercad com todos os componentes fiéis ao projeto. Além disso, foi utilizado também em códigos para serem testados em uma placa Arduino. No entanto, esses últimos testes consistiam emular o comportamento dos motores DC por meio de LED's, a fim de prototipar o robô fisicamente, uma vez que não havia em mãos os motores DC, que é parte principal do projeto do robô autonômo.

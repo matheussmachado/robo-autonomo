@@ -2,8 +2,7 @@
 #define OPERACOES_H
 
 #include <Arduino.h>
-#include "motores_led.h"
-//#include "motores_dc.h"
+#include "motores_dc.h"
 
 // DEFINIÇÕES DE PINAGEM
 //============================================================
@@ -38,9 +37,6 @@
 
 // MOTORES DC 
 //============================================================
-extern struct MotorDC motorEsquerdo;
-extern struct MotorDC motorDireito;
-
 void locomover(int sentido);
 void frear();
 void manobrarLateral(int lado);

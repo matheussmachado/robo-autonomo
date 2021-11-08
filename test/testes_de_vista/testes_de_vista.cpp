@@ -1,4 +1,4 @@
-/*
+
 #include <Arduino.h>
 #include "testes_de_vista.h"
 #include "operacoes.h"
@@ -46,4 +46,3 @@ void testesMovimentoDosMotores() {
 
 
 //
-*/

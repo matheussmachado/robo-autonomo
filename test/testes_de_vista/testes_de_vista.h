@@ -1,4 +1,3 @@
-/*
 #ifndef TESTES_DE_VISTA_H
 #define TESTES_DE_VISTA_H
 
@@ -6,4 +5,3 @@
 void testesMovimentoDosMotores();
 
 #endif
-*/
