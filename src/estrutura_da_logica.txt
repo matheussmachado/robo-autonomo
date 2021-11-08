@@ -1,73 +1,211 @@
 //Estratégia atual: seguir até o próximo obstáculo e manobrar ao chegar a ele
 
-// escopo principal: controlar a estratégia
+// o escopo principal (void loop) irá controlar a estratégia
 
 //proposta geral: controlar apenas o fluxo das operações, mas não em como serão realizadas, obtendo o feedback de cada operação para traçar o próximo passo
 
 // exemplo - escopo void loop: controlar apenas quais serão os movimentos, solicitando uma instrução, mas não se preocupando com as complexidades de como ela é executada. Cada operação retorna um feedback que servirá de base para a tomada de decisão da próxima operação
 
-//segue o pseudocódigo das estruturas propostas
+//O pseudocódigo a seguir é apenas um esboço da lógica, o nome das variáveis, funções e definições não necessariamente serão as definitivas no código final
 
-Loop() {
-    Seguiu = seguirAteObstaculo()
-    If seguiu:
-        Return //para continuar a seguir
-    While true:
-        Manobrou = manobrar()
-        If Manobrou:
-            Break
+// essa estruturação é apenas um esboço. O seu funcionamento deve ser testado ao ser implementado no controle do robô
 
+< COMENTÁRIOS
+- será que consigo pôr essas funções intermediárias em outro arquivo e importalas no main?
+- onde pôr as definições?
+>
+
+*INICIO main.cpp*
+
+void setup() {
+   setupMotoresDC();
+}
+
+
+void loop() {
+    // lógica da estratégia
+    //TODO: VER COMO ABSTRAIR O mover... PARA SER PASSADA APENAS UMA DIREÇÃO
+    obstaculo = verificarObstaculoFrontal()
+    if (!obstaculo) {
+       moverMotoresDCParaFrente()
+       return //para reiniciar a função loop do inicio
+    }
+    PararMotoresDC()
+    manobrar = TRUE
+    while (manobrar):
+        ladoParaSeguir = escanearLaterais()
+        if (ladoParaSeguir != LADO_TRASEIRO) {
+            manobrarLateral(ladoParaSeguir)
+            manobrar = FALSE
+        }
+        else {
+            moverMotoresDCParaTras()
+            Delay para a ré
+        }
+        
+}
+
+*FIM main.cpp*
+
+
+
+*INICIO funcoes.cpp*
+
+#define PIN_MOTOR_A 2
+#define PIN_MOTOR_B 3
+#define PIN_SENSOR 5 
+#define PIN_SERVO 6
+
+struct MotorDC motorA
+
+void setupMotores() {
+    // para o motor: passar os atributos
+    motorA.atributo = PIN_MOTOR_A
+    pinMode(PIN_MOTOR_A, OUTPUT)
+    ...
+}
+
+void setupSensorUltrassonico() {
+    pinMode(PIN_SENSOR, INPUT)
+    ...
+}
+
+void setupServo() {
+    pinMode(PIN_SERVO, OUTPUT)
+    ...
+}
+
+
+manobrarLateral(lado) {
+   // implementar
+   Delay para manobrar
+}
+
+medirDistancia() {
+    //varias coisas, interage com o PIN_SENSOR
+    return distancia
+}
+
+- podemos ter um config.cpp para configuração de pinos e instancias de classes, setups diferenciados, etc
+- um function.cpp para implementar funções em cima das coisas acima
+- main.cpp dá os setups da config.cpp e executa as implementações de fuctions
+TENTAR TRBALHAR COM NO MINIMO DOIS ARQUIVOS E EXPANDIR AO APARECER A NECESSIDADE: ter um config que compartilha com function que compartilha com main OU ter um function.cpp e um function.h, definir no .h, implementar no .cpp e o main inclue do .h
+
+verificarObstaculoFrontal() {
+   obstaculo = TRUE
+   medicaoFrontal = medirDistancia()
+   if (medicaoFrontal > DISTANCIA_FRONTAL_MINIMA) {
+      seguir = FALSE
+   }
+   return seguir //feedback da operação
+}
+
+escanearLaterais() {
+   ladoParaSeguir = LADO_TRASEIRO;
+   medicao = 0
+   girarSensor(DIREITA)
+   medicaoDireita = medirDistancia()
+   girarSensor(ESQUERDA)
+   medicaoEsquerda = medirDistancia()
+   medicao = max(medicaoDireita, medição esquerda) //max entre as medições
+   if (medicao > DISTANCIA_LATERAL_MINIMA) {
+      if (medicao == mediçãoDireita) {
+         ladoParaSeguir = LADO_DIREITA
+      }
+      else {
+         ladoParaSeguir = LADO_ESQUERDA
+      }
+   }
+   girarSensor(FRENTE)
+   return ladoParaSeguir
+}
+
+*FIM funcoes.cpp*
+
+PARA ESSSA LÓGICA:
+
+seguirAteObstaculo usa: medirDistancia()
+manobrarLateral usa: é função própria do motor
+escanearLaterais usa: medirDistancia(), girarSensor()
+
+EXISTE UMA DEPENDÊNCIA E O DESAFIO É CONSEGUIR CONFIGURAR OS ELEMENTOS, UMA VEZ QUE SÃO PARTES DE COMPONENTES ELETRONICOS SEPARADOS
+
+--------------------------
+void loop() {
+    seguiu = seguirAteObstaculo()
+    if (seguiu) {
+       return //para reiniciar a função loop do inicio
+    }
+    while (TRUE):
+        manobrou = manobrarLateral()
+        if (manobrou) {
+            break
+        }
 }
 
 //explorando as operações
 
 seguirAteObstaculo() {
-   Seguir = false
-   MediçãoFrontal = Medir()
-   If mediçãoFrontal > DISTANCIA_FRONTAL_MINIMA: //arbitrar valor
-      Seguir = true
-      AvançarMotoresDC()
-   Else:
+   seguir = FALSE
+   medicaoFrontal = medirDistancia()
+   if (medicaoFrontal > DISTANCIA_FRONTAL_MINIMA) {
+      seguir = TRUE
+      moverMotoresDCParaFrente()
+   }
+   else {
       PararMotoresDC()
-   Return seguir //feedback da operação
+   }
+   return seguir //feedback da operação
 }
 
-Manobrar() {
-    
-   Manobrar = false
-   Lado = EscanearLaterais()
-   if lado != LADO_NULO:
-      manobrar = true
-      if lado == LADO_DIREITO: 
-         AvancarMotor(motorEsquerda, SENTIDO_FRONTAL)
-      else:
-         AvancarMotor (motorDireita, SENTIDO_FRONTAL)
+manobrarLateral() {
+   manobrar = FALSE
+   ladoParaSeguir = escanearLaterais()
+   if (ladoParaSeguir != LADO_TRASEIRO) {
+      manobrar = TRUE
+      if (ladoParaSeguir == LADO_DIREITO) {
+         moverMotorDC(motorEsquerda, SENTIDO_FRONTAL)
+      }
+      else {
+         moverMotorDC(motorDireita, SENTIDO_FRONTAL)
+      }
       Delay para a manobra
-   else: 
-      RetrocederMotores(motorDireita, motorEsquerda)
+   }
+   else {
+      moverMotoresDCParaTras()
       Delay para a ré
-   Return manobrar //feedback da operação
+   }
+   return manobrar //feedback da operação
 }
 
-EscanearLateral() {
-   lado = LADO_NULO;
+escanearLaterais() {
+   ladoParaSeguir = LADO_TRASEIRO;
    medicao = 0
    girarSensor(DIREITA)
-   MediçãoDireita = medir()
+   medicaoDireita = medirDistancia()
    girarSensor(ESQUERDA)
-   MediçãoEsquerda = medir()
-   medicao = max(Medição Direita, medição esquerda)
-   If medicao > distanciaLateralMinima:
-      If medicao == mediçãoDireita:
-         lado = LADO_DIREITA
-      else:
-         lado = LADO_ESQUERDA
+   medicaoEsquerda = medirDistancia()
+   medicao = max(medicaoDireita, medição esquerda) //max entre as medições
+   if (medicao > DISTANCIA_LATERAL_MINIMA) {
+      if (medicao == mediçãoDireita) {
+         ladoParaSeguir = LADO_DIREITA
+      }
+      else {
+         ladoParaSeguir = LADO_ESQUERDA
+      }
+   }
    girarSensor(FRENTE)
-   Return lado
+   return ladoParaSeguir
 }
 
 
-
+PARA ESSA LÓGICA:
+/*
+seguiAteObstaculo usa: medidor e motores
+manobrarLateral usa: motores e escanearLaterais
+escanearLaterais usa: medidor e giraSensor
+giraSensor usa: servomotor
+*/
 
 VANTAGENS:
 - legibilidade e organização
@@ -75,3 +213,5 @@ VANTAGENS:
 - isolamento e testabilidade
 - manutenção e correção
 - extensão ou mudança com poucas adaptações
+
+
