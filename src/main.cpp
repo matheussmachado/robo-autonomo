@@ -24,13 +24,13 @@ int escolherLado() {
   medicao = medicaoDireita = medicaoEsquerda = 0;
   medicaoDireita = medirDistanciaLateral(LADO_DIREITO);
   medicaoEsquerda = medirDistanciaLateral(LADO_ESQUERDO);
-  medicao = max(medicaoDireita, medicaoEsquerda); //obter o máximo entre as medições
+  medicao = min(medicaoDireita, medicaoEsquerda); //pois deverá haver um valor mínimo nos dois lados do robô para realizar a manobra, devido a dimensão atual do chassi.
   if (medicao >= DISTANCIA_LATERAL_MINIMA) {
     if (medicao == medicaoDireita) {
-      ladoParaSeguir = LADO_DIREITO;
+      ladoParaSeguir = LADO_ESQUERDO; //pois será o maior lado a ser seguido
     }
     else {
-      ladoParaSeguir = LADO_ESQUERDO;
+      ladoParaSeguir = LADO_DIREITO;
     }
   }
   delay(500);
@@ -45,6 +45,7 @@ int ladoParaSeguir;
 void setup() {
   pinMode(LED_BUILTIN, OUTPUT);
   digitalWrite(LED_BUILTIN, LOW);
+  delay(5000);
   setupMotoresDC();
   setupSensorUltrassonico();
   setupServoMotor();
@@ -61,7 +62,6 @@ void loop() {
   while (manobrar) {
     ladoParaSeguir = escolherLado();
     if (ladoParaSeguir != LADO_TRASEIRO) {
-      manobrar = false;
       if (ladoParaSeguir == LADO_DIREITO) {
         manobrarLateral(LADO_DIREITO);
       }
@@ -69,6 +69,7 @@ void loop() {
         manobrarLateral(LADO_ESQUERDO);
       }
       delay(TEMPO_MANOBRA);
+      manobrar = false;
     }
     else {
       locomover(SENTIDO_TRASEIRO);
